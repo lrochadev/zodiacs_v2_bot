@@ -8,7 +8,7 @@ import np
 
 total_cars_acc = 3
 force_pos = 1
-# scroll windows force 3
+# scroll windows to force 3 scrolls
 scroll_force = 93
 execute_system = True
 threshold = 0.7
@@ -72,15 +72,14 @@ def run_system():
                     pyautogui.scroll(-2000)
                     time.sleep(1)
                     pyautogui.scroll(-2000)
-
                     x, y, w, h = rectangles[len(rectangles) - 1]
                     position_y = position_last_3[total_cars_acc - cars_count]
-
-                    rectangles = img_find_screen('images/car-list.png', True, 0, position_y)
+                    img_find_screen('images/car-list.png', True, 0, position_y)
                     move_to_with_randomness(x, y + position_y, 1)
                 else:
                     img_find_screen('images/car-list.png', True, 0, mouse_init_y_plus)
                     pyautogui.click()
+
                     if cars_count > 1:
                         if last_race_status == 1:
                             pyautogui.scroll(-scroll_force)
@@ -107,6 +106,7 @@ def run_system():
                         time.sleep(time_wait_claim)
                         error = False
                         rectangles = img_find_screen('images/check-result-btn.png', True, 0, 10)
+
                         if rectangles == "HtmlRequestError":
                             pyautogui.press('esc')
                             print("ERROR: HtmlRequestError")
@@ -138,20 +138,18 @@ def print_screen():
 def img_find_position(img_target):
     img = print_screen()
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
     result = cv2.matchTemplate(img, img_target, cv2.TM_CCOEFF_NORMED)
-
     w = img_target.shape[1]
     h = img_target.shape[0]
-
     yloc, xloc = np.where(result >= threshold)
-
     rectangles = []
+
     for (x, y) in zip(xloc, yloc):
         rectangles.append([int(x), int(y), int(w), int(h)])
         rectangles.append([int(x), int(y), int(w), int(h)])
 
     rectangles, weights = cv2.groupRectangles(rectangles, 1, 0.2)
+
     return rectangles
 
 
@@ -161,23 +159,19 @@ def img_find_screen(img_path, move_mouse, plus_x, plus_y):
 
 def img_find_screen_time(img_path, move_mouse, plus_x, plus_y, time_limit):
     rectangles = []
-
     time_limit = time_limit * 1000
-
     start_time = round(time.time() * 1000)
-
     img_target = cv2.imread(img_path)
     img_target = cv2.cvtColor(img_target, cv2.COLOR_BGR2GRAY)
-
     verify_result = False
     img_target2 = None
+
     if 'check-result-btn' in img_path:
         verify_result = True
         img_target2 = cv2.imread("images/http-request-failed.png")
         img_target2 = cv2.cvtColor(img_target2, cv2.COLOR_BGR2GRAY)
 
     while True:
-
         if time_limit > 0:
             current_time = round(time.time() * 1000)
             tm = current_time - start_time
@@ -205,7 +199,6 @@ def img_find_screen_time(img_path, move_mouse, plus_x, plus_y, time_limit):
 
 def main():
     global total_force, force_pos, cars_count, last_race_status, position_last_3
-
     if force_pos > 1:
         cars_count = force_pos - 1
         total_force = scroll_force * (force_pos - 2)
