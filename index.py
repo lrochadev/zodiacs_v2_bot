@@ -9,7 +9,7 @@ import np
 from pynput.mouse import Listener
 import logging
 
-totalCarsAcc = 13
+totalCarsAcc = 3
 forcePos = 1  # default
 scrollForce = 93  # scroll windows force 3
 executeSystem = True
