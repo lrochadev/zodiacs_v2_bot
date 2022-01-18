@@ -6,39 +6,40 @@ import sys
 import mss
 import np
 
-totalCarsAcc = 3
-forcePos = 1  # default
-scrollForce = 93  # scroll windows force 3
-executeSystem = True
+total_cars_acc = 3
+force_pos = 1
+# scroll windows force 3
+scroll_force = 93
+execute_system = True
 threshold = 0.7
-timeWaitClaim = 5
-mouseInitX = 1752
-mouseInitY = 472
-mouseUnselectedYPlus = 48
-mouseInitYPlus = 78
-mouseBtnStartX = 1751
-mouseBtnStartY = 494
-lastRaceStatus = 1
-
-driverAux = None
-cont = 0
-totalForce = 0
-carsCount = 0
+time_wait_claim = 5
+mouse_init_x = 1752
+mouse_init_y = 472
+mouse_unselected_y_plus = 48
+mouse_init_y_plus = 78
+mouse_btn_start_x = 1751
+mouse_btn_start_y = 494
+last_race_status = 1
+driver_aux = None
+total_force = 0
+cars_count = 0
 cars = 0
+position_last_3 = [250, 150, 100]
 
-positionLast3 = [250, 150, 100]
 
-
-def add_randomness(n, randomn_factor_size=None):
-    if randomn_factor_size is None:
+def add_randomness(n, random_factor_size=None):
+    if random_factor_size is None:
         randomness_percentage = 0.1
-        randomn_factor_size = randomness_percentage * n
+        random_factor_size = randomness_percentage * n
 
-    random_factor = 2 * random() * randomn_factor_size
+    random_factor = 2 * random() * random_factor_size
+
     if random_factor > 5:
         random_factor = 5
-    without_average_random_factor = n - randomn_factor_size
+
+    without_average_random_factor = n - random_factor_size
     randomized_n = int(without_average_random_factor + random_factor)
+
     return int(randomized_n)
 
 
@@ -46,53 +47,45 @@ def move_to_with_randomness(x, y, t):
     pyautogui.moveTo(add_randomness(x, 10), add_randomness(y, 10), t + random() / 2)
 
 
-def get_mouse_position():
-    position = pyautogui.position()
-    print(position)
-    time.sleep(2)
-
-
 def run_system():
-    global cont, cars, carsCount, totalForce, mouseInitYPlus, scrollForce, lastRaceStatus, forcePos
+    global cars, cars_count, total_force, mouse_init_y_plus, scroll_force, last_race_status, force_pos
+    cars_count += 1
 
-    carsCount += 1
-
-    if carsCount > totalCarsAcc:
+    if cars_count > total_cars_acc:
         print("\n -------------------------------- End cars !!!")
         sys.exit(0)
 
-    if carsCount > 1:
-        totalForce += scrollForce
+    if cars_count > 1:
+        total_force += scroll_force
 
-    global mouseBtnStartX, mouseBtnStartY
-    global executeSystem, timeWaitClaim
+    global mouse_btn_start_x, mouse_btn_start_y
+    global execute_system, time_wait_claim
 
-    if executeSystem:
+    if execute_system:
         error = False
 
         while True:
             if not error:
-                # positions 8,9,10 ex: 10cars
-                if carsCount > totalCarsAcc - 3:
-                    rectangles = img_find_screen('Img/car-list.png', True, 0, mouseInitYPlus)
+                if cars_count > total_cars_acc - 3:
+                    rectangles = img_find_screen('Img/car-list.png', True, 0, mouse_init_y_plus)
                     pyautogui.click()
                     pyautogui.scroll(-2000)
                     time.sleep(1)
                     pyautogui.scroll(-2000)
 
                     x, y, w, h = rectangles[len(rectangles) - 1]
-                    position_y = positionLast3[totalCarsAcc - carsCount]
+                    position_y = position_last_3[total_cars_acc - cars_count]
 
                     rectangles = img_find_screen('Img/car-list.png', True, 0, position_y)
                     move_to_with_randomness(x, y + position_y, 1)
                 else:
-                    img_find_screen('Img/car-list.png', True, 0, mouseInitYPlus)
+                    img_find_screen('Img/car-list.png', True, 0, mouse_init_y_plus)
                     pyautogui.click()
-                    if carsCount > 1:
-                        if lastRaceStatus == 1:
-                            pyautogui.scroll(-scrollForce)
-                        elif lastRaceStatus == 2:
-                            pyautogui.scroll(-totalForce)
+                    if cars_count > 1:
+                        if last_race_status == 1:
+                            pyautogui.scroll(-scroll_force)
+                        elif last_race_status == 2:
+                            pyautogui.scroll(-total_force)
 
                 time.sleep(1)
                 pyautogui.click()
@@ -105,13 +98,13 @@ def run_system():
                 rectangles = img_find_screen_time('Img/race-completed.png', False, 0, 0, 5)
 
                 if len(rectangles) > 0:
-                    print(str(carsCount) + " - Race Completed")
+                    print(str(cars_count) + " - Race Completed")
                     pyautogui.press('esc')
-                    lastRaceStatus = 1
+                    last_race_status = 1
                     break
                 else:
                     while True:
-                        time.sleep(timeWaitClaim)
+                        time.sleep(time_wait_claim)
                         error = False
                         rectangles = img_find_screen('Img/check-result-btn.png', True, 0, 10)
                         if rectangles == "HtmlRequestError":
@@ -128,11 +121,11 @@ def run_system():
                                     pyautogui.press('esc')
                                     img_find_screen('Img/car-list.png', True, 0, 80)
                                     pyautogui.click()
-                                    lastRaceStatus = 2
+                                    last_race_status = 2
                                     break
                             break
     else:
-        print(str(carsCount) + " - " + str(totalForce))
+        print(str(cars_count) + " - " + str(total_force))
 
 
 def print_screen():
@@ -162,23 +155,23 @@ def img_find_position(img_target):
     return rectangles
 
 
-def img_find_screen(imgPath, moveMouse, plusX, plusY):
-    return img_find_screen_time(imgPath, moveMouse, plusX, plusY, 0)
+def img_find_screen(img_path, move_mouse, plus_x, plus_y):
+    return img_find_screen_time(img_path, move_mouse, plus_x, plus_y, 0)
 
 
-def img_find_screen_time(imgPath, moveMouse, plusX, plusY, time_limit):
+def img_find_screen_time(img_path, move_mouse, plus_x, plus_y, time_limit):
     rectangles = []
 
     time_limit = time_limit * 1000
 
     start_time = round(time.time() * 1000)
 
-    img_target = cv2.imread(imgPath)
+    img_target = cv2.imread(img_path)
     img_target = cv2.cvtColor(img_target, cv2.COLOR_BGR2GRAY)
 
     verify_result = False
     img_target2 = None
-    if 'check-result-btn' in imgPath:
+    if 'check-result-btn' in img_path:
         verify_result = True
         img_target2 = cv2.imread("Img/http-request-failed.png")
         img_target2 = cv2.cvtColor(img_target2, cv2.COLOR_BGR2GRAY)
@@ -199,9 +192,9 @@ def img_find_screen_time(imgPath, moveMouse, plusX, plusY, time_limit):
         rectangles = img_find_position(img_target)
         if len(rectangles) > 0:
             x, y, w, h = rectangles[len(rectangles) - 1]
-            x += plusX
-            y += plusY
-            if moveMouse:
+            x += plus_x
+            y += plus_y
+            if move_mouse:
                 move_to_with_randomness(x, y, 1)
             return rectangles
 
@@ -211,12 +204,12 @@ def img_find_screen_time(imgPath, moveMouse, plusX, plusY, time_limit):
 
 
 def main():
-    global totalForce, forcePos, carsCount, lastRaceStatus, positionLast3
+    global total_force, force_pos, cars_count, last_race_status, position_last_3
 
-    if forcePos > 1:
-        carsCount = forcePos - 1
-        totalForce = scrollForce * (forcePos - 2)
-        lastRaceStatus = 2
+    if force_pos > 1:
+        cars_count = force_pos - 1
+        total_force = scroll_force * (force_pos - 2)
+        last_race_status = 2
     while True:
         run_system()
         time.sleep(0.1)
