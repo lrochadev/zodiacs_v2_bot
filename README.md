@@ -1,4 +1,4 @@
-# zodiacs_v2_bot
+# Zodiacs_v2_bot
 
 ## Instruções de uso:
 
@@ -10,3 +10,4 @@ Em seguida altere a variável totalCarsAcc para a quantidade de carros que você
 
 - python3 index.py
 
+### Créditos: Bruno Porto
