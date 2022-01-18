@@ -10,4 +10,6 @@ Em seguida altere a variável totalCarsAcc para a quantidade de carros que você
 
 - python3 index.py
 
+## OBS: O bot foi testado somente na resolução 1920 x 1080.
+
 ### Créditos: Bruno Porto
