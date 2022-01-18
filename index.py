@@ -3,11 +3,8 @@ import cv2
 from random import random
 import time
 import sys
-import os
 import mss
 import np
-from pynput.mouse import Listener
-import logging
 
 totalCarsAcc = 3
 forcePos = 1  # default
