@@ -67,7 +67,7 @@ def run_system():
         while True:
             if not error:
                 if cars_count > total_cars_acc - 3:
-                    rectangles = img_find_screen('Img/car-list.png', True, 0, mouse_init_y_plus)
+                    rectangles = img_find_screen('images/car-list.png', True, 0, mouse_init_y_plus)
                     pyautogui.click()
                     pyautogui.scroll(-2000)
                     time.sleep(1)
@@ -76,10 +76,10 @@ def run_system():
                     x, y, w, h = rectangles[len(rectangles) - 1]
                     position_y = position_last_3[total_cars_acc - cars_count]
 
-                    rectangles = img_find_screen('Img/car-list.png', True, 0, position_y)
+                    rectangles = img_find_screen('images/car-list.png', True, 0, position_y)
                     move_to_with_randomness(x, y + position_y, 1)
                 else:
-                    img_find_screen('Img/car-list.png', True, 0, mouse_init_y_plus)
+                    img_find_screen('images/car-list.png', True, 0, mouse_init_y_plus)
                     pyautogui.click()
                     if cars_count > 1:
                         if last_race_status == 1:
@@ -90,12 +90,12 @@ def run_system():
                 time.sleep(1)
                 pyautogui.click()
 
-            rectangles = img_find_screen('Img/start-btn.png', True, 0, 10)
+            rectangles = img_find_screen('images/start-btn.png', True, 0, 10)
             pyautogui.click()
 
             if len(rectangles) > 0:
 
-                rectangles = img_find_screen_time('Img/race-completed.png', False, 0, 0, 5)
+                rectangles = img_find_screen_time('images/race-completed.png', False, 0, 0, 5)
 
                 if len(rectangles) > 0:
                     print(str(cars_count) + " - Race Completed")
@@ -106,7 +106,7 @@ def run_system():
                     while True:
                         time.sleep(time_wait_claim)
                         error = False
-                        rectangles = img_find_screen('Img/check-result-btn.png', True, 0, 10)
+                        rectangles = img_find_screen('images/check-result-btn.png', True, 0, 10)
                         if rectangles == "HtmlRequestError":
                             pyautogui.press('esc')
                             print("ERROR: HtmlRequestError")
@@ -116,10 +116,10 @@ def run_system():
                         if len(rectangles) > 0:
                             pyautogui.click()
                             while True:
-                                rectangles = img_find_screen('Img/claim-btn.png', False, 0, 0)
+                                rectangles = img_find_screen('images/claim-btn.png', False, 0, 0)
                                 if len(rectangles) > 0:
                                     pyautogui.press('esc')
-                                    img_find_screen('Img/car-list.png', True, 0, 80)
+                                    img_find_screen('images/car-list.png', True, 0, 80)
                                     pyautogui.click()
                                     last_race_status = 2
                                     break
@@ -173,7 +173,7 @@ def img_find_screen_time(img_path, move_mouse, plus_x, plus_y, time_limit):
     img_target2 = None
     if 'check-result-btn' in img_path:
         verify_result = True
-        img_target2 = cv2.imread("Img/http-request-failed.png")
+        img_target2 = cv2.imread("images/http-request-failed.png")
         img_target2 = cv2.cvtColor(img_target2, cv2.COLOR_BGR2GRAY)
 
     while True:
