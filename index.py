@@ -89,7 +89,7 @@ def run_system():
                 time.sleep(1)
                 pyautogui.click()
 
-            rectangles = img_find_screen('images/start-btn.png', True, 0, 10)
+            rectangles = img_find_screen('images/start-btn.png', True, 0, 15)
             pyautogui.click()
 
             if len(rectangles) > 0:
